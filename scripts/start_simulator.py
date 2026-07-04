@@ -19,7 +19,7 @@ from rooms.models import Room
 
 def run_iot_simulator():
     print("=" * 60)
-    print("🚀 CORE WORKSPACE SYSTEM DEVICE STATE SIMULATOR ACTIVE")
+    print("CORE WORKSPACE SYSTEM DEVICE STATE SIMULATOR ACTIVE")
     print("   Target Engine Source: Local SQLite Node")
     print("   Frequency Pattern: Mutation Interval Toggled Every 4 Seconds")
     print("=" * 60)
@@ -29,7 +29,7 @@ def run_iot_simulator():
             # Fetch all registered tracking device entries
             devices = list(Device.objects.all())
             if not devices:
-                print("⚠️ Error Context: No tracking device profiles found in the target database instance. Run seed data first.")
+                print("Error Context: No tracking device profiles found in the target database instance. Run seed data first.")
                 time.sleep(5)
                 continue
             
@@ -42,13 +42,13 @@ def run_iot_simulator():
             target_device.status = new_status
             target_device.save()
             
-            print(f"📡 [SIM_EVENT] | Room: {target_device.room.name:<15} | Device: {target_device.name:<10} | Transition: {old_status} ──► {new_status} | Wattage: {target_device.current_power}W")
+            print(f"[SIM_EVENT] | Room: {target_device.room.name:<15} | Device: {target_device.name:<10} | Transition: {old_status} ──► {new_status} | Wattage: {target_device.current_power}W")
             
             # Wait 4 seconds before the next event loop run
             time.sleep(4)
             
     except KeyboardInterrupt:
-        print("\n🛑 Simulation session terminated gracefully by user control break input.")
+        print("\nSimulation session terminated gracefully by user control break input.")
 
 if __name__ == "__main__":
     run_iot_simulator()
