@@ -1,20 +1,22 @@
-========================================================================
-TECHATHON NATIONALS & ROVER SUMMIT 2026 - HACKATHON HARDWARE SUBMISSION
-========================================================================
+Office Monitoring System
+Hardware Simulation (Representative Room)
 
-Project Title: Smart Office Monitoring System
-Team Role: Central Backend & Embedded Integration
-Component: Representative Room Node (Drawing Room - 2 Fans, 3 Lights)
+This Wokwi project demonstrates the representative hardware circuit for one office room using an ESP32 development board.
 
-------------------------------------------------------------------------
-LIVE VIRTUAL SIMULATION ACCESS LINK:
-------------------------------------------------------------------------
-👉 https://wokwi.com/projects/YOUR_UNIQUE_WOKWI_ID_HERE
+The simulation includes:
+- ESP32-WROOM-32 Development Board
+- 2 Yellow LEDs representing Fans
+- 3 Blue LEDs representing Lights
+- 220Ω current-limiting resistors for each output
 
-------------------------------------------------------------------------
-Operational Guide:
-1. Click the simulation link above to view the physical layout blueprint.
-2. The schematic presents a fully wired circuit showcasing an ESP32 controlling active relay paths.
-3. Click the green "Start Simulation" arrow in the interface workspace.
-4. Open the Serial Monitor pane inside Wokwi to view active, real-time current telemetry data strings flowing out every 3 seconds.
-========================================================================
+GPIO Mapping:
+- GPIO13 → Fan 1
+- GPIO12 → Fan 2
+- GPIO14 → Light 1
+- GPIO27 → Light 2
+- GPIO26 → Light 3
+
+This representative circuit can be replicated for the remaining rooms in the office, satisfying the hardware simulation requirement of the project.
+
+Public Wokwi Project:
+https://wokwi.com/projects/468615185937188865
