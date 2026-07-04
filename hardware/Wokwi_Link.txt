@@ -1,0 +1,20 @@
+========================================================================
+TECHATHON NATIONALS & ROVER SUMMIT 2026 - HACKATHON HARDWARE SUBMISSION
+========================================================================
+
+Project Title: Smart Office Monitoring System
+Team Role: Central Backend & Embedded Integration
+Component: Representative Room Node (Drawing Room - 2 Fans, 3 Lights)
+
+------------------------------------------------------------------------
+LIVE VIRTUAL SIMULATION ACCESS LINK:
+------------------------------------------------------------------------
+👉 https://wokwi.com/projects/YOUR_UNIQUE_WOKWI_ID_HERE
+
+------------------------------------------------------------------------
+Operational Guide:
+1. Click the simulation link above to view the physical layout blueprint.
+2. The schematic presents a fully wired circuit showcasing an ESP32 controlling active relay paths.
+3. Click the green "Start Simulation" arrow in the interface workspace.
+4. Open the Serial Monitor pane inside Wokwi to view active, real-time current telemetry data strings flowing out every 3 seconds.
+========================================================================
