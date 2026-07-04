@@ -256,11 +256,13 @@ Contents include:
 
 **Team Name:** Tech_Innovators
 
-| Name                    | Role                            |
-| ----------------------- | ------------------------------- |
-| Md Rakibul Hassan       | Backend Developer & Team Leader |
-| Md. Tahsin Azad Shaikat | Hardware Developer              |
-| Md. Saif Hasan Shafe    | Frontend & UI Developer         |
+# Contributors
+
+*Team Name:* Tech_Innovators
+
+- *Md Rakibul Hassan* – Team Leader, Full Stack Developer, IoT Developer
+- *Md. Tahsin Azad Shaikat* – Full Stack Developer, IoT Developer
+- *Md. Saif Hasan Shafe* – Full Stack Developer
 
 ---
 
