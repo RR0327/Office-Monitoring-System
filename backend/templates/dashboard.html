@@ -1,9 +1,150 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Smart Office Control Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .metric-card { border: none; border-radius: 12px; transition: transform 0.2s; }
+        .metric-card:hover { transform: translateY(-3px); }
+        .room-card { border: none; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .device-badge { font-size: 0.85rem; padding: 6px 12px; border-radius: 30px; cursor: pointer; }
+        .alert-banner { border-radius: 10px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 0.9; } 50% { opacity: 1; } 100% { opacity: 0.9; } }
+    </style>
+</head>
+<body>
 
-{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 bg-white p-3 rounded-3 shadow-sm">
+        <div>
+            <h1 class="h3 mb-1 text-dark fw-bold">Smart Office System</h1>
+            <p class="text-muted mb-0">Techathon Nationals 2026 Abstraction Panel</p>
+        </div>
+        <span class="badge bg-success px-3 py-2 rounded-pill">● System Live</span>
+    </div>
 
-<h1>Office Monitoring System</h1>
+    <div id="alerts-container" class="mb-4"></div>
 
-<p>Django setup completed successfully.</p>
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card metric-card bg-primary text-white p-3 shadow-sm">
+                <small class="text-white-50 uppercase fw-bold">Cumulative Load Draw</small>
+                <h2 class="fw-bold my-1"><span id="metric-power">0</span> W</h2>
+                <small id="metric-kw" class="text-white-50">0.000 kW Operating Metric</small>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card metric-card bg-dark text-white p-3 shadow-sm">
+                <small class="text-white-50 uppercase fw-bold">Active Load Profiles</small>
+                <h2 class="fw-bold my-1"><span id="metric-active-count">0</span> / 15</h2>
+                <small class="text-white-50">Operational Appliances Online</small>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card metric-card bg-white text-dark p-3 shadow-sm border-start border-primary border-4">
+                <small class="text-muted uppercase fw-bold">Active Operational Window</small>
+                <h2 class="fw-bold my-1 h3 text-truncate" id="live-clock">00:00:00</h2>
+                <small class="text-muted">Unified Tracker Node</small>
+            </div>
+        </div>
+    </div>
 
-{% endblock %}
+    <div class="row g-4" id="rooms-grid">
+        </div>
+</div>
+
+<script>
+    // Live Interface Running Clock
+    setInterval(() => {
+        document.getElementById('live-clock').innerText = new Date().toLocaleTimeString();
+    }, 1000);
+
+    // REST Consumer Execution Path
+    async function updateDashboardMetrics() {
+        try {
+            const response = await fetch('/api/status/');
+            const data = await response.json();
+
+            // 1. Update Global Metrics Header Data Cards
+            document.getElementById('metric-power').innerText = data.total_power_w;
+            document.getElementById('metric-kw').innerText = `${data.total_power_kw} kW Operating Metric`;
+            document.getElementById('metric-active-count').innerText = data.active_devices_count;
+
+            // 2. Render Risk Alerts System
+            const alertsContainer = document.getElementById('alerts-container');
+            alertsContainer.innerHTML = '';
+            if (data.alerts && data.alerts.length > 0) {
+                data.alerts.forEach(alert => {
+                    alertsContainer.innerHTML += `
+                        <div class="alert alert-danger alert-banner shadow-sm d-flex align-items-center mb-2" role="alert">
+                            <strong class="me-2">⚠️ ${alert.severity}:</strong> ${alert.message} (${alert.room_name})
+                        </div>`;
+                });
+            }
+
+            // 3. Render Functional Layout Blocks For All 3 Office Spaces
+            const grid = document.getElementById('rooms-grid');
+            grid.innerHTML = '';
+
+            data.rooms.forEach(room => {
+                let deviceRowsHtml = '';
+                
+                room.devices.forEach(device => {
+                    const isStatusOn = device.status === 'ON';
+                    const badgeClass = isStatusOn ? 'bg-success text-white' : 'bg-secondary text-white-50';
+                    const icon = device.device_type === 'FAN' ? '🌀' : '💡';
+                    
+                    deviceRowsHtml += `
+                        <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-light">
+                            <span class="fw-medium">${icon} ${device.name}</span>
+                            <span class="badge device-badge ${badgeClass}" onclick="toggleDeviceState(${device.id}, '${device.status}')">
+                                ${device.status} (${device.power_rating}W)
+                            </span>
+                        </div>`;
+                });
+
+                grid.innerHTML += `
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card room-card h-100 bg-white shadow-sm">
+                            <div class="card-header bg-transparent border-0 pt-3 pb-0 d-flex justify-content-between align-items-center">
+                                <h5 class="card-title fw-bold text-secondary mb-0">${room.name}</h5>
+                                <span class="badge bg-light text-dark border">${room.total_power} W active</span>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted small mb-3">${room.description}</p>
+                                ${deviceRowsHtml}
+                            </div>
+                        </div>
+                    </div>`;
+            });
+
+        } catch (error) {
+            console.error("Critical error mapping stream fields:", error);
+        }
+    }
+
+    // Interactivity Layer: Push Device Toggle Requests Back to Backend Router
+    async function toggleDeviceState(id, currentStatus) {
+        const targetedStatus = currentStatus === 'ON' ? 'OFF' : 'ON';
+        try {
+            await fetch(`/api/device/${id}/toggle/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+                body: JSON.stringify({ status: targetedStatus })
+            });
+            updateDashboardMetrics(); // Instantly redraw panel layouts
+        } catch (err) {
+            console.error("Failed handling interface state write action:", err);
+        }
+    }
+
+    // Boot Loop Instantiation Engine Call
+    updateDashboardMetrics();
+    // High Frequency Polling Abstraction Layer (Fulfills live update metric without WebSockets)
+    setInterval(updateDashboardMetrics, 2000);
+</script>
+</body>
+</html>
